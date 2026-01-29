@@ -7,7 +7,9 @@ from pathlib import Path
 
 from .chat import generate_answer
 from .config import AppConfig
+from .gcp import initialize_vertex_ai
 from .ingest import upload_documents
+from .indexing import build_vector_index
 from .retrieval import retrieve_context
 
 
@@ -43,13 +45,28 @@ def run_chat(query: str) -> int:
         missing_vars = ", ".join(missing)
         print(f"Missing required environment variables: {missing_vars}")
         return 1
-    chunks = retrieve_context(query)
+    initialize_vertex_ai(config)
+    chunks = retrieve_context(config, query)
     response = generate_answer(config, query, chunks)
     print(response.answer)
     if response.sources:
         print("\nSources:")
         for chunk in response.sources:
             print(f"- {chunk.uri}")
+    return 0
+
+
+def run_index(paths: list[Path], output: Path | None) -> int:
+    config = AppConfig.from_env()
+    missing = config.validate()
+    if missing:
+        missing_vars = ", ".join(missing)
+        print(f"Missing required environment variables: {missing_vars}")
+        return 1
+    initialize_vertex_ai(config)
+    output_path = output or Path(config.vector_index_path)
+    build_vector_index(config, paths, output_path)
+    print(f"Vector index written to {output_path}")
     return 0
 
 
@@ -65,6 +82,14 @@ def build_parser() -> argparse.ArgumentParser:
     chat_parser = subparsers.add_parser("chat", help="Run a test query")
     chat_parser.add_argument("query")
 
+    index_parser = subparsers.add_parser("index", help="Build a local vector index")
+    index_parser.add_argument("paths", nargs="+", type=Path)
+    index_parser.add_argument(
+        "--output",
+        type=Path,
+        help="Output JSONL path (defaults to VECTOR_INDEX_PATH)",
+    )
+
     return parser
 
 
@@ -78,6 +103,8 @@ def main() -> int:
         return run_ingest(args.paths)
     if args.command == "chat":
         return run_chat(args.query)
+    if args.command == "index":
+        return run_index(args.paths, args.output)
     raise ValueError(f"Unknown command {args.command}")
 
 

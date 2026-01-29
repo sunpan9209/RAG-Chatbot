@@ -16,6 +16,7 @@ Set environment variables:
 export GCP_PROJECT_ID="rag-chatbot-485501"
 export GCP_REGION="us-central1"
 export DOCUMENT_BUCKET="llm-doc-bucket"
+export VECTOR_INDEX_PATH="vector_index.jsonl"
 ```
 
 Validate configuration:
@@ -30,6 +31,12 @@ Upload documents:
 rag-chatbot ingest path/to/doc1.pdf path/to/doc2.txt
 ```
 
+Build a local vector index (JSONL):
+
+```bash
+rag-chatbot index path/to/doc1.txt path/to/doc2.txt
+```
+
 Run a test query (stub response until Vertex AI wiring is implemented):
 
 ```bash
@@ -41,7 +48,7 @@ rag-chatbot chat "What is in the docs?"
 1. **Foundation (this commit)**
    - Configuration, CLI entry points, and stubs for ingestion, retrieval, and chat orchestration.
 2. **Retrieval pipeline**
-   - Add document parsing, embedding generation, and vector index creation.
+   - Add document parsing, embedding generation, and vector index creation (JSONL index).
 3. **Answer generation**
    - Replace stub response with a Vertex AI (Gemini) model invocation (this project uses
      Gemini, not OpenAI).

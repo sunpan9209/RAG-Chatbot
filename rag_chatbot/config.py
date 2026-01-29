@@ -19,6 +19,7 @@ class AppConfig:
     embedding_model: str
     chat_model: str
     document_bucket: str
+    vector_index_path: str
 
     @staticmethod
     def from_env() -> "AppConfig":
@@ -30,6 +31,7 @@ class AppConfig:
             ),
             chat_model=os.environ.get("CHAT_MODEL", "gemini-1.5-pro"),
             document_bucket=os.environ.get("DOCUMENT_BUCKET", ""),
+            vector_index_path=os.environ.get("VECTOR_INDEX_PATH", "vector_index.jsonl"),
         )
 
     def validate(self) -> list[str]:
