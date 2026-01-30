@@ -37,7 +37,7 @@ Build a local vector index (JSONL):
 rag-chatbot index path/to/doc1.txt path/to/doc2.txt
 ```
 
-Run a test query (stub response until Vertex AI wiring is implemented):
+Run a test query:
 
 ```bash
 rag-chatbot chat "What is in the docs?"
