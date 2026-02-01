@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from typing import Optional
 
-from google.cloud import aiplatform
-
 from .config import AppConfig
 
 
 def initialize_vertex_ai(config: AppConfig) -> None:
     """Initialize the Vertex AI SDK with the configured project settings."""
+    from google.cloud import aiplatform
+
     aiplatform.init(project=config.gcp_project_id, location=config.gcp_region)
 
 
