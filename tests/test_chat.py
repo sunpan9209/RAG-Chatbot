@@ -14,8 +14,9 @@ class ChatTests(unittest.TestCase):
         self.assertIn("Question?", prompt)
 
     @patch("rag_chatbot.chat.initialize_vertex_ai")
-    @patch("rag_chatbot.chat.GenerativeModel")
-    def test_generate_answer_calls_gemini(self, mock_model, mock_init) -> None:
+    @patch("rag_chatbot.chat._load_generative_model")
+    def test_generate_answer_calls_gemini(self, mock_load_model, mock_init) -> None:
+        mock_model = mock_load_model.return_value
         mock_instance = mock_model.return_value
         mock_instance.generate_content.return_value = MagicMock(text="Answer")
         config = AppConfig(
@@ -31,6 +32,7 @@ class ChatTests(unittest.TestCase):
         response = generate_answer(config, "Question?", chunks)
 
         mock_init.assert_called_once_with(config)
+        mock_load_model.assert_called_once_with()
         mock_model.assert_called_once_with("gemini-1.5-pro")
         mock_instance.generate_content.assert_called_once()
         self.assertEqual(response.answer, "Answer")
