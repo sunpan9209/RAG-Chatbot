@@ -75,6 +75,13 @@ gcloud run deploy rag-chatbot \
   --set-env-vars GCP_PROJECT_ID=$GCP_PROJECT_ID,GCP_REGION=$GCP_REGION,DOCUMENT_BUCKET=$DOCUMENT_BUCKET,VECTOR_INDEX_PATH=$VECTOR_INDEX_PATH
 ```
 
+## GitHub Actions Deployment (optional)
+
+An example GitHub Actions workflow is provided in
+`.github/workflows/deploy-cloud-run.yml`. Configure the required secrets and
+Workload Identity Federation before enabling it. See `docs/cloud-run-iam.md` for
+the IAM role checklist.
+
 ## Implementation Phases
 
 1. **Foundation (this commit)**
