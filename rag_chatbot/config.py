@@ -29,7 +29,7 @@ class AppConfig:
             embedding_model=os.environ.get(
                 "EMBEDDING_MODEL", "textembedding-gecko@latest"
             ),
-            chat_model=os.environ.get("CHAT_MODEL", "gemini-1.5-pro"),
+            chat_model=os.environ.get("CHAT_MODEL", "gemini-2.5-pro"),
             document_bucket=os.environ.get("DOCUMENT_BUCKET", ""),
             vector_index_path=os.environ.get("VECTOR_INDEX_PATH", "vector_index.jsonl"),
         )
