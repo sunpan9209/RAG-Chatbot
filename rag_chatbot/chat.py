@@ -5,8 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterable
 
-from vertexai.preview.generative_models import GenerativeModel
-
 from .config import AppConfig
 from .gcp import initialize_vertex_ai
 from .retrieval import RetrievedChunk
@@ -26,6 +24,12 @@ def build_prompt(query: str, chunks: Iterable[RetrievedChunk]) -> str:
     )
 
 
+def _load_generative_model():
+    from vertexai.preview.generative_models import GenerativeModel
+
+    return GenerativeModel
+
+
 def generate_answer(
     config: AppConfig,
     query: str,
@@ -34,7 +38,8 @@ def generate_answer(
     """Generate an answer using Vertex AI Gemini."""
     initialize_vertex_ai(config)
     prompt = build_prompt(query, chunks)
-    model = GenerativeModel(config.chat_model)
+    model_cls = _load_generative_model()
+    model = model_cls(config.chat_model)
     response = model.generate_content(prompt)
     answer = response.text or ""
     return ChatResponse(answer=answer, sources=chunks)
