@@ -34,9 +34,21 @@ jobs:
       - name: Build and deploy
         run: |
           gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}
+          env_vars=(
+            "GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}"
+            "GCP_REGION=${{ env.REGION }}"
+            "DOCUMENT_BUCKET=${{ secrets.DOCUMENT_BUCKET }}"
+            "VECTOR_INDEX_PATH=${{ secrets.VECTOR_INDEX_PATH }}"
+          )
+          if [[ -n "${{ secrets.EMBEDDING_MODEL }}" ]]; then
+            env_vars+=("EMBEDDING_MODEL=${{ secrets.EMBEDDING_MODEL }}")
+          fi
+          if [[ -n "${{ secrets.CHAT_MODEL }}" ]]; then
+            env_vars+=("CHAT_MODEL=${{ secrets.CHAT_MODEL }}")
+          fi
           gcloud run deploy ${{ env.SERVICE_NAME }} \
             --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }} \
             --region ${{ env.REGION }} \
             --platform managed \
             --allow-unauthenticated \
-            --set-env-vars GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }},GCP_REGION=${{ env.REGION }},DOCUMENT_BUCKET=${{ secrets.DOCUMENT_BUCKET }},VECTOR_INDEX_PATH=${{ secrets.VECTOR_INDEX_PATH }}
+            --set-env-vars "$(IFS=,; echo "${env_vars[*]}")"
