@@ -61,6 +61,14 @@ curl -X POST http://localhost:8080/chat \
   -d '{"query": "What is in the docs?"}'
 ```
 
+Build a vector index from documents already uploaded to your GCS bucket:
+
+```bash
+curl -X POST http://localhost:8080/index \
+  -H "Content-Type: application/json" \
+  -d '{"prefix": "", "overwrite": true}'
+```
+
 ## Cloud Run Deployment
 
 Build and deploy with `gcloud` (assumes you have authenticated and configured your project):
