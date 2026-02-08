@@ -4,12 +4,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from math import sqrt
-from pathlib import Path
 from typing import Iterable
 
 from .config import AppConfig
 from .embeddings import VertexEmbeddingClient
-from .indexing import VectorIndex
+from .indexing import load_vector_index
 
 
 @dataclass(frozen=True)
@@ -32,8 +31,7 @@ def retrieve_context(
     config: AppConfig, query: str, *, top_k: int = 5
 ) -> Iterable[RetrievedChunk]:
     """Retrieve top-k chunks from the local JSONL vector index."""
-    index_path = Path(config.vector_index_path)
-    index = VectorIndex.load(index_path)
+    index = load_vector_index(config, config.vector_index_path)
     if not index.entries:
         return []
 
