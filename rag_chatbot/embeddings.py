@@ -19,7 +19,7 @@ class VertexEmbeddingClient:
 
     def embed_texts(self, texts: Sequence[str]) -> list[list[float]]:
         initialize_vertex_ai(self.config)
-        model = TextEmbeddingModel.from_pretrained(self.config.embedding_model)
+        model = TextEmbeddingModel.from_pretrained("gemini-embedding-001")
         embeddings = model.get_embeddings(texts)
         return [embedding.values for embedding in embeddings]
 
